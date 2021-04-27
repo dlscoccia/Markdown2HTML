@@ -19,6 +19,10 @@ def checkFiles(args):
 checkFiles(args);
 
 def parseReadme(readme):
-    print(readme)
-
+    symbol = [] #represents the markdown symbol to convert
+    for line in readme.split("\n"):
+        symbol = line.split(' ')[0]
+        print(symbol[0])
+        # use if statements to see which symbol is
+            #call function for the right symbol and return de line converted
 parseReadme(checkFiles(args));
