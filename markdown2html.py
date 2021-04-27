@@ -11,9 +11,14 @@ def checkFiles(args):
         try:
             with open(args[1], 'r') as file:
                 readme = file.read()
+                return(readme)
         except:
             sys.stderr.write("Missing {}\n".format(args[1]))
             exit(1)
 
 checkFiles(args);
 
+def parseReadme(readme):
+    print(readme)
+
+parseReadme(checkFiles(args));
