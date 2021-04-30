@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 '''Python Module'''
 import sys
+import hashlib
 args = sys.argv
 readme_lines = []
 html_file = []
@@ -8,6 +9,7 @@ symbols = ['#','-','*']
 boldOrEm = ['**', '__', ['<b>','</b>'],['<em>','</em>']]
 
 def checkFiles(args):
+    '''Function to check and read the readme file from cli'''
     if (len(args) == 1):
         sys.stderr.write("Usage: ./markdown2html.py README.md README.html\n")
         exit(1)
@@ -28,15 +30,17 @@ def parseHeadings(text, symbol):
     return (heading_line)
 
 def parseListItem(text, symbol):
-    '''Converts list text into li tag items'''
+    '''Function to convert list text into li tag items'''
     list_item = "<li>{}</li>".format(('').join(text))
     return(list_item)
 
 def parseParagraph(text):
+    '''Function to change any text line into a p tag'''
     paragraph = "<p>{}</p>".format(text)
     return(paragraph)
 
 def changeBoldOrEmphasis(line, replace, tags):
+    '''Function to change any text into bold or emphasis tags'''
     changeNeeded = line.count(replace)
     newLine = line
     while (changeNeeded >= 2):
@@ -44,6 +48,23 @@ def changeBoldOrEmphasis(line, replace, tags):
         newLine = newLine.replace(replace, tags[1],1)
         changeNeeded -= 2
     return(newLine)
+
+def changeMD5(line):
+    '''Function to changes any text between [[]] into MD5 hash'''
+    right = line[:line.find('[[')]
+    left = line[line.find(']]')+2:]
+    text = hashlib.md5(line[line.find('[[')+2:line.find(']]')].encode())
+    return ("{}{}{}".format(right,text.hexdigest(),left))
+
+def changeCc(line):
+    '''Function to remove any 'C' or 'c' in the text between (( ))'''
+    right = line[:line.find('((')]
+    left = line[line.find('))')+2:]
+    text = line[line.find('((')+2:line.find('))')]
+    for char in text:
+        if (char == 'C' or char == 'c'):
+            text = text.replace(char,'')
+    return ("{}{}{}".format(right,text,left))
 
 def parseReadme(readme):
     '''Function that read lines from the README file'''
@@ -53,6 +74,10 @@ def parseReadme(readme):
             newLine = changeBoldOrEmphasis(newLine, boldOrEm[0], boldOrEm[2])
         if (newLine.count(boldOrEm[1]) >= 2):
             newLine = changeBoldOrEmphasis(newLine, boldOrEm[1], boldOrEm[3])
+        if (newLine.find('[[') < newLine.find(']]')):
+            newLine = changeMD5(newLine)
+        if (newLine.find('((') < newLine.find('))')):
+            newLine = changeCc(newLine)
         data = newLine.split(' ')
         if (len(data[0]) > 0):
             symbol = data[0]
@@ -84,6 +109,7 @@ def parseReadme(readme):
                 html_file.append(html_line)
 
 def createHTML(data):
+    '''Function that takes a list of lines as input and write into the final html file'''
     file = open("README.html", "w")
     for line in data:
         file.write("{}\n".format(line))
