@@ -111,7 +111,7 @@ def parseReadme(readme):
 
 def createHTML(data):
     '''Function that takes a list of lines as input and write into the final html file'''
-    file = open(args[2], "w")
+    file = open(args[2], "w+")
     for line in data:
         file.write("{}\n".format(line))
 
