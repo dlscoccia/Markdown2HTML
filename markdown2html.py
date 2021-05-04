@@ -2,6 +2,7 @@
 '''Python Module'''
 import sys
 import hashlib
+import re
 args = sys.argv
 readme_lines = []
 html_file = []
@@ -10,7 +11,7 @@ boldOrEm = ['**', '__', ['<b>','</b>'],['<em>','</em>']]
 
 def checkFiles(args):
     '''Function to check and read the readme file from cli'''
-    if (len(args) == 1):
+    if (len(args) < 3):
         sys.stderr.write("Usage: ./markdown2html.py README.md README.html\n")
         exit(1)
     elif (len(args) == 3):
@@ -110,7 +111,7 @@ def parseReadme(readme):
 
 def createHTML(data):
     '''Function that takes a list of lines as input and write into the final html file'''
-    file = open("README.html", "w")
+    file = open(args[2], "w")
     for line in data:
         file.write("{}\n".format(line))
 
