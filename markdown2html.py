@@ -94,7 +94,7 @@ def parseReadme(readme):
                     prev_items = ('').join(html_file[-1:])[4:-5]
                     list_item = ("{}{}").format(prev_items, list_item)
                     html_file.pop()
-                html_file.append("<ul>{}</ul>".format(list_item))
+                html_file.append("<ul>{}</ul>".format(list_item.strip("\n")))
             elif (symbol[0] == '*'):
                 list_item = parseListItem(text, symbol)
                 if (('').join(html_file[-1:])[1:3] == 'ol'):
